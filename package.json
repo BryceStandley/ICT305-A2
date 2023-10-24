@@ -1,0 +1,20 @@
+{
+    "name": "ict305-a2",
+    "version": "1.0.0",
+    "main": "./electron/main.js",
+    "scripts": {
+        "start": "electron .",
+        "pack": "electron-builder --dir",
+        "dist": "electron-builder"
+    },
+    "devDependencies": {
+        "electron": "^27.0.2",
+        "electron-builder": "^24.6.4"
+    },
+    "build": {
+        "appId": "ict305.pink-fluffy-unicorns",
+        "productName" : "PinkFluffyUnicorns ICT305 A2",
+        "copyright" : "Copyright © 2023 PinkFluffyUnicorns"
+      }
+
+}

@@ -1,0 +1,20 @@
+"Daily Weather Observations for Adelaide (West Terrace / Ngayirdapira), South Australia for December 2022"
+"Prepared at 07:00 UTC on Monday 12 December 2022   IDCJDW5081.202212"
+"Copyright 2003 Commonwealth Bureau of Meteorology"
+"The official site for Adelaide, having reopened in May 2017."
+"This is the "official" site for Adelaide, having reopened in May 2017. Observations are available from the Kent Town site {station number 023090} up until 31 July 2020."
+"Observations were drawn from Adelaide (West Terrace / Ngayirdapira) {station 023000}"
+
+,"Date","Minimum temperature (°C)","Maximum temperature (°C)","Rainfall (mm)","Evaporation (mm)","Sunshine (hours)","Direction of maximum wind gust ","Speed of maximum wind gust (km/h)","Time of maximum wind gust","9am Temperature (°C)","9am relative humidity (%)","9am cloud amount (oktas)","9am wind direction","9am wind speed (km/h)","9am MSL pressure (hPa)","3pm Temperature (°C)","3pm relative humidity (%)","3pm cloud amount (oktas)","3pm wind direction","3pm wind speed (km/h)","3pm MSL pressure (hPa)"
+,2022-12-1,10.9,26.1,0,,,E,28,16:20,18.3,55,,ENE,7,1017.8,24.9,34,,E,7,1014.7
+,2022-12-2,13.9,28.1,0,,,E,30,01:28,21.9,51,,WSW,4,1015.3,27.5,34,,WSW,13,1013.0
+,2022-12-3,14.7,33.6,0,,,WSW,26,12:27,23.8,52,, ,Calm,1013.7,32.4,12,,W,13,1011.6
+,2022-12-4,16.2,35.5,0,,,SW,41,17:48,27.7,24,,N,13,1011.1,32.7,15,,WSW,17,1008.9
+,2022-12-5,14.9,23.3,0,,,S,39,11:52,18.1,54,,SSE,13,1015.5,21.4,41,,SE,15,1015.7
+,2022-12-6,10.7,27.2,0,,,E,30,03:38,17.9,42,,ESE,6,1011.9,25.9,27,,NNW,6,1007.4
+,2022-12-7,14.0,20.9,0,,,WSW,46,13:36,16.8,58,,SSW,15,1010.6,20.4,41,,SW,24,1011.8
+,2022-12-8,8.3,21.1,0,,,WSW,35,13:54,16.3,44,,S,11,1019.3,19.2,42,,SW,22,1017.3
+,2022-12-9,12.1,27.2,0,,,E,28,03:08,15.1,48,,ENE,17,1017.2,24.4,30,,NE,9,1013.5
+,2022-12-10,15.0,35.6,0,,,NW,46,13:52,25.6,33,,NNE,15,1010.5,34.0,15,,NW,30,1006.1
+,2022-12-11,16.6,22.4,0.8,,,SW,44,18:34,18.3,81,,W,7,1006.8,19.5,66,,SW,17,1006.5
+,2022-12-12,12.6,,3.2,,,,,,15.6,55,,SW,22,1012.5,15.2,66,,SW,17,1014.3

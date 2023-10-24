@@ -1,0 +1,37 @@
+"Daily Weather Observations for Hobart, Tasmania for February 2021"
+"Prepared at 13:03 UTC on Tuesday  9 November 2021   IDCJDW7021.202102"
+"Copyright 2003 Commonwealth Bureau of Meteorology"
+"Most observations from Battery Point, but cloud, evaporation and sunshine from Hobart Airport."
+"Conditions at Hobart Airport may be markedly different to those in the city on some days. Some cloud observations are from automated equipment; these are somewhat different to those made by a human observer and may not appear every day."
+"Temperature, humidity, wind, pressure and rainfall observations are from Hobart (Ellerslie Road) {station 094029}"
+"Cloud, evaporation and sunshine observations are from Hobart Airport {station 094008}"
+
+,"Date","Minimum temperature (°C)","Maximum temperature (°C)","Rainfall (mm)","Evaporation (mm)","Sunshine (hours)","Direction of maximum wind gust ","Speed of maximum wind gust (km/h)","Time of maximum wind gust","9am Temperature (°C)","9am relative humidity (%)","9am cloud amount (oktas)","9am wind direction","9am wind speed (km/h)","9am MSL pressure (hPa)","3pm Temperature (°C)","3pm relative humidity (%)","3pm cloud amount (oktas)","3pm wind direction","3pm wind speed (km/h)","3pm MSL pressure (hPa)"
+,2021-02-1,14.0,25.2,0,7.0,,SE,43,14:40,19.6,57,7,N,19,1012.8,22.2,57,7,S,24,1008.3
+,2021-02-2,11.6,20.5,0,4.0,,SW,50,11:36,16.3,47,3,SW,22,1013.6,19.9,41,6,SW,20,1014.7
+,2021-02-3,11.6,19.3,0,5.6,,ESE,35,16:26,14.4,64,7,S,7,1021.1,18.3,46,1,ESE,20,1017.9
+,2021-02-4,13.5,25.3,1.8,4.6,,ESE,35,14:55,15.5,95,8,N,9,1007.2,23.1,62,3,SE,20,1005.1
+,2021-02-5,14.9,25.0,0.2,4.2,,N,28,15:00,21.3,75,7,N,2,1008.6,24.2,71,7,ENE,17,1003.2
+,2021-02-6,17.0,26.9,41.2,1.6,,N,65,13:47,19.0,94,7,NW,13,993.7,25.8,34,4,N,37,990.8
+,2021-02-7,14.1,20.6,0.8,5.4,,SW,57,09:38,15.9,60,7,SW,26,1003.2,19.1,40,1,SSW,30,1008.2
+,2021-02-8,11.6,20.6,0,6.6,,SW,54,13:24,14.3,59,3,NNW,31,1014.6,18.9,44,6,WSW,31,1014.5
+,2021-02-9,10.0,15.8,0,5.0,,SW,39,01:09,13.0,58,7,S,19,1023.2,15.1,50,7,SSE,19,1023.1
+,2021-02-10,9.9,20.1,0,2.0,,ESE,30,14:44,14.4,54,1,N,17,1020.7,19.8,46,1,ESE,20,1016.8
+,2021-02-11,11.0,24.2,0,4.6,,NNW,43,18:56,16.1,62,1,NNW,20,1011.1,22.8,44,8,NNE,13,1004.2
+,2021-02-12,16.1,23.8,6.6,5.6,,NW,69,06:44,18.7,51,1,NW,39,993.4,23.5,38,2,WNW,26,997.4
+,2021-02-13,14.3,20.4,0.2,7.6,,WNW,39,00:58,17.1,54,5,NNW,11,1008.3,18.9,58,3,SE,22,1011.9
+,2021-02-14,11.1,21.8,0,4.4,,SSE,39,16:35,15.4,67,1,NNW,11,1019.0,21.2,53,1,ESE,20,1017.5
+,2021-02-15,13.0,18.9,0.6,4.8,,SSE,31,01:29,14.1,84,8,SSW,13,1027.3,17.5,66,7,NNE,7,1026.7
+,2021-02-16,12.8,23.3,0,3.0,,ESE,35,14:46,16.8,75,2,NNW,15,1027.2,22.4,53,3,ESE,19,1025.6
+,2021-02-17,12.4,29.2,0,5.4,,NNW,39,09:56,17.5,65,1,N,19,1027.0,28.6,34,1,NNE,13,1024.9
+,2021-02-18,15.0,30.5,0,7.2,,N,50,22:39,18.6,58,1,N,24,1026.5,29.2,25,0,NNE,19,1021.9
+,2021-02-19,16.0,31.8,0,7.2,,NNE,54,14:51,20.1,59,1,NNW,20,1016.6,31.1,27,5,NNW,26,1010.7
+,2021-02-20,17.4,20.5,0,10.6,,SSW,39,03:36,17.8,83,8,SE,19,1012.4,19.4,70,8,SE,26,1011.0
+,2021-02-21,15.0,21.4,0,3.2,,SSE,39,15:08,16.6,84,7,ESE,9,1009.7,20.2,64,3,SE,22,1006.4
+,2021-02-22,14.1,21.1,0,4.8,,NW,59,10:35,18.5,45,3,NW,22,1005.1,18.5,40,5,WSW,24,1006.1
+,2021-02-23,8.0,19.3,0,7.2,,ESE,43,17:47,13.6,51,1,NNE,7,1014.8,16.4,43,6,SSW,19,1015.2
+,2021-02-24,7.9,23.5,0,3.2,,WNW,50,15:17,12.4,59,1,NNW,22,1018.8,21.9,28,2,WNW,22,1014.3
+,2021-02-25,12.3,20.0,0,5.8,,NW,65,09:13,16.4,49,7,NNW,33,1000.4,17.4,42,5,NNW,19,1000.7
+,2021-02-26,11.6,19.7,0.6,4.6,,SSW,54,10:43,14.6,63,7,SW,11,1009.4,18.7,59,6,S,26,1012.1
+,2021-02-27,12.8,18.5,0,4.0,,SSE,28,14:42,14.5,63,7,NNW,9,1016.8,18.0,52,7,SE,17,1014.2
+,2021-02-28,11.5,21.4,0,3.4,,SE,37,16:40,16.0,68,1,NNW,7,1013.7,20.6,57,5,SE,19,1010.9
