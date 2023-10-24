@@ -16,9 +16,6 @@ function startCodeFunction() {
   printBoth("Initiating python");
   child = exec('cmd.exe /c .\\python\\start_app.bat"', (error, stdout, stderr) => {
     printBoth(stdout)
-    if (error) {
-      printBoth(`exec error: ${error}`);
-    }
   });
 
   child.stdout.on("data", (data) => {
@@ -29,7 +26,7 @@ function startCodeFunction() {
     );
   });
 };
-
+startCodeFunction();
 
 // Create the browser window.
 function createWindow() {
@@ -45,7 +42,7 @@ function createWindow() {
   // Load the index.html of the app.
   mainWindow.loadURL("http://localhost:5006");
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  ///mainWindow.webContents.openDevTools();
 }
 
 // This method will be called when Electron has finished
@@ -61,7 +58,7 @@ app.whenReady().then(() => {
   });
 });
 
-startCodeFunction();
+
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

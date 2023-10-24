@@ -213,12 +213,12 @@ def update_plots(yearValue, monthValue, capitalMain, capitalSub):
         trimmedMainSourceData.data = dict(newData1)
         trimmedSubSourceData.data = dict(newData1)
 
-        evapPlot.title.text = capitalMain.capitalize() + ' vs ' + capitalSub.capitalize() + " Evaporation in {month} {year}".format(
-            month=datetime.datetime.strptime(str(monthValue), '%m').strftime('%B'), year=yearValue)
-        rainPlot.title.text = capitalMain.capitalize() + ' vs ' + capitalSub.capitalize() + " Rainfall in {month} {year}".format(
-            month=datetime.datetime.strptime(str(monthValue), '%m').strftime('%B'), year=yearValue)
-        sunPlot.title.text = capitalMain.capitalize() + ' vs ' + capitalSub.capitalize() + " Sunshine in {month} {year}".format(
-            month=datetime.datetime.strptime(str(monthValue), '%m').strftime('%B'), year=yearValue)
+    evapPlot.title.text = capitalMain.capitalize() + ' vs ' + capitalSub.capitalize() + " Evaporation in {month} {year}".format(
+        month=datetime.datetime.strptime(str(monthValue), '%m').strftime('%B'), year=yearValue)
+    rainPlot.title.text = capitalMain.capitalize() + ' vs ' + capitalSub.capitalize() + " Rainfall in {month} {year}".format(
+        month=datetime.datetime.strptime(str(monthValue), '%m').strftime('%B'), year=yearValue)
+    sunPlot.title.text = capitalMain.capitalize() + ' vs ' + capitalSub.capitalize() + " Sunshine in {month} {year}".format(
+        month=datetime.datetime.strptime(str(monthValue), '%m').strftime('%B'), year=yearValue)
 
 
 def slidersOnChange(attr, old, new):
