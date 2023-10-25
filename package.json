@@ -1,11 +1,14 @@
 {
-    "name": "ict305-a2",
+    "name": "pink_fluffy_unicorns_ict305_a2",
     "version": "1.0.0",
     "main": "./electron/main.js",
+    "description": "ICT305 Assignment 2",
+    "author": "PinkFluffyUnicorns",
     "scripts": {
         "start": "electron .",
         "pack": "electron-builder --dir",
-        "dist": "electron-builder"
+        "dist": "electron-builder",
+        "build": "build"
     },
     "devDependencies": {
         "electron": "^27.0.2",
@@ -13,8 +16,22 @@
     },
     "build": {
         "appId": "ict305.pink-fluffy-unicorns",
-        "productName" : "PinkFluffyUnicorns ICT305 A2",
-        "copyright" : "Copyright © 2023 PinkFluffyUnicorns"
-      }
-
+        "productName": "PinkFluffyUnicorns ICT305 A2",
+        "copyright": "Copyright © 2023 PinkFluffyUnicorns",
+        "icon": "build/icon.png",
+        "win": {
+            "target": [
+                "portable"
+            ]
+        },
+        "portable": {
+            "artifactName": "ICT305-A2-PinkFluffyUnicorns.exe"
+        },
+        "extraFiles": [
+            "python"
+        ]
+    },
+    "dependencies": {
+        "ps-tree": "^1.2.0"
+    }
 }

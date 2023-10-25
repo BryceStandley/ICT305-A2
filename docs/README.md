@@ -90,7 +90,6 @@ Install Node.js and Python.
 
 4. A page should spawn looking as follows:
 
-![alt text](../images/screenshot_2.png)
 
 1. Press **LAUNCH PROGRAM\_** button
 

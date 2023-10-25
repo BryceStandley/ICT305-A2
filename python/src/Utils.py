@@ -12,9 +12,9 @@ def GetMinMax(dataFrameColumn):
     return min(dataFrameColumn), max(dataFrameColumn)
 
 def CreateGraphTabPanel(capitalMainDropdown: Dropdown, capitalSubDropdown: Dropdown, yearSlider: Slider, monthSlider: Slider, plot: figure, plotTitle: str) -> TabPanel:
-    return TabPanel(child=column(capitalMainDropdown, capitalSubDropdown, row(yearSlider, monthSlider), column(plot)), title=plotTitle)
+    return TabPanel(child=column(row(capitalMainDropdown, capitalSubDropdown), row(yearSlider, monthSlider), column(plot)), title=plotTitle)
 
-def CreatePageLayout(titleItem: Div, pageTabItems : list[UIElement], align: str, margin: any) -> row:
+def CreatePageLayout(titleItem: Div, pageTabItems : list[TabPanel], align: str, margin: any) -> row:
     return row(column(titleItem, Tabs(tabs=pageTabItems), align=align, margin=margin))
 
 def CreateLinePlotHoverTool(yaxis: tuple, additionalHoverInfo: list[tuple: str]):
@@ -25,8 +25,8 @@ def CreateLinePlotHoverTool(yaxis: tuple, additionalHoverInfo: list[tuple: str])
         additionalHoverInfo[2][1].split('{')[0] : 'printf',
     })
 
-def CreateLinePlot(plotTitle: str, dataframe, trimmedMainSourceData, trimmedSubSourceData, month, year, xAxisKey: str, yAxisKey: str, xAxisLabel: str, yAxisLabel: str):
-    plot = figure(height=600, width=1000)
+def CreateLinePlot(plotTitle: str, dataframe, trimmedMainSourceData, trimmedSubSourceData, month, year, xAxisKey: str, yAxisKey: str, xAxisLabel: str, yAxisLabel: str, yaxisFormat: str):
+    plot = figure(height=600, width=800)
     plot.title = plotTitle.format(
         month=datetime.datetime.strptime(str(month), '%m').strftime('%B'), year=year)
     plot.title_location = 'above'
@@ -43,7 +43,7 @@ def CreateLinePlot(plotTitle: str, dataframe, trimmedMainSourceData, trimmedSubS
     # Set range for X and Y and limit the plot to the min and max
     plot.x_range = Range1d(xmin, xmax, bounds=(xmin, xmax))
     plot.y_range = Range1d(ymin - 1, ymax + 1, bounds=(ymin - 1, ymax + 1))
-    plot.yaxis[0].formatter = PrintfTickFormatter(format='%smm')
+    plot.yaxis[0].formatter = PrintfTickFormatter(format=yaxisFormat)
     plot.xaxis.axis_label = xAxisLabel
     plot.yaxis.axis_label = yAxisLabel
     plot.visible = True

@@ -1,6 +1,7 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, ipcMain, Notification } = require("electron");
 const { spawn, exec } = require("child_process");
+psTree = require('ps-tree');
 const path = require("path");
 
 const nodeConsole = require("console");
@@ -31,8 +32,8 @@ startCodeFunction();
 // Create the browser window.
 function createWindow() {
   const mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 900,
+    width: 1000,
+    height: 1000,
     resizable: true,
     webPreferences: {
       nodeIntegration: true,
@@ -66,46 +67,12 @@ app.whenReady().then(() => {
 app.on("window-all-closed", function () {
   if (process.platform !== "darwin")
   {
+    //process.kill(-child.pid);
+    psTree(child.pid, function (err, children) {
+    spawn('taskkill', ['/f /pid'].concat(children.map(function (p) { return p.PID })));
+    });
+
+
     app.quit();
   }
-});
-
-app.on("will-quit", function() {
-  process.kill(-child.pid);
-});
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-ipcMain.on("execute", (command) => {
-  console.log("executing ls");
-  child = exec("ls", function (error, stdout, stderr) {
-    if (error !== null) {
-      console.log("exec error: " + error);
-    }
-  });
-});
-
-ipcMain.on("open_json_file_sync", () => {
-  const fs = require("fs");
-
-  fs.readFile("config.json", function (err, data) {
-    if (err) {
-      return console.error(err);
-    }
-    printBoth("Called through ipc.send from guiExample.js");
-    printBoth("Asynchronous read: " + data.toString());
-  });
-});
-
-ipcMain.on("open_json_file_async", () => {
-  const fs = require("fs");
-
-  const fileName = "./config.json";
-  const data = fs.readFileSync(fileName);
-  const json = JSON.parse(data);
-
-  printBoth("Called through ipc.send from guiExample.js");
-  printBoth(
-    `Data from config.json:\nA_MODE = ${json.A_MODE}\nB_MODE = ${json.B_MODE}\nC_MODE = ${json.C_MODE}\nD_MODE = ${json.D_MODE}`
-  );
 });

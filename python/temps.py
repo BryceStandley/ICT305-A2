@@ -1,19 +1,8 @@
 #Imports
 
 import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.dates import DateFormatter
-from ipywidgets import interact, widgets
-from IPython.display import display
-import plotly.graph_objects as go
-
-#Bokeh
-from bokeh.core.enums import Align
-from bokeh.core.properties import Enum
-from bokeh.io import curdoc, output_notebook
-from bokeh.plotting import figure, show
+from bokeh.plotting import figure
 from bokeh.models import HoverTool, ColumnDataSource, Div, Slider, Range1d, PrintfTickFormatter, CustomJSTickFormatter, CustomJS, InlineStyleSheet, Button, CustomJS, SetValue, TabPanel, Tabs, DatetimeTickFormatter, Legend, LegendItem
-from bokeh.palettes import Spectral6
 from bokeh.layouts import column, row
 
 
@@ -40,10 +29,10 @@ maxJanSource= ColumnDataSource(data={
     'y': january_data['Maximum temperature (°C)']
 })
 
-janTemps = figure(height=600, width=1000)
+janTemps = figure(height=600, width=800)
 janTemps.xaxis.axis_label = 'Date'
 janTemps.yaxis.axis_label = 'Temperature (°C)'
-janTemps.title = 'Minimum and Maximum Temperatures in January 2021'
+janTemps.title = 'Perth Min & Max Temperatures in January 2021'
 janTemps.line(source=minJanSource, color='blue', legend_label ='Min Temp')
 janTemps.line(source=maxJanSource, color='red', legend_label ='Max Temp')
 
@@ -72,10 +61,10 @@ setup_monthly_data.columns = ['Date', 'minTemp', 'maxTemp']
 minS = ColumnDataSource(data={'x': setup_monthly_data.Date, 'y' : setup_monthly_data.minTemp})
 maxS = ColumnDataSource(data={'x': setup_monthly_data.Date, 'y' : setup_monthly_data.maxTemp})
 
-temp_plot = figure(height=600, width=1000)
+temp_plot = figure(height=600, width=800)
 temp_plot.xaxis.axis_label = 'Date'
 temp_plot.yaxis.axis_label = 'Temperature (°C)'
-temp_plot.title = 'Minimum and Maximum Temperatures in {month}'
+temp_plot.title = 'Perth Min & Max Temperatures in {month}'
 temp_plot.line(source=minS, color='blue', legend_label ='Min Temp')
 temp_plot.line(source=maxS, color='red', legend_label ='Max Temp')
 
@@ -112,7 +101,7 @@ def plot_monthly_data_bokeh(event = None):
     
     minS.data = minTempSource
     maxS.data = maxTempSource
-    temp_plot.title.text = 'Minimum and Maximum Temperatures in {month}'.format(month = monthly_data.iloc[0]["Date"].strftime("%B %Y"))
+    temp_plot.title.text = 'Perth Min & Max Temperatures in {month}'.format(month = monthly_data.iloc[0]["Date"].strftime("%B %Y"))
 
 # func for button click
 monthly_plot_button.on_click(plot_monthly_data_bokeh)
@@ -144,10 +133,10 @@ maxMonthlyTempSource = ColumnDataSource(data={
     'y' : monthly_averages.maxTemp,
 })
 
-monthly_temp_plot = figure(height=600, width=1000, x_range=(1,12))
+monthly_temp_plot = figure(height=600, width=800, x_range=(1,12))
 monthly_temp_plot.xaxis.axis_label = 'Month'
 monthly_temp_plot.yaxis.axis_label = 'Temperature (°C)'
-monthly_temp_plot.title = 'Average Minimum and Maximum Temperatures in {year}'.format(year = 2021)
+monthly_temp_plot.title = 'Perth Average Min & Max Temperatures in {year}'.format(year = 2021)
 monthly_temp_plot.line(source=minMonthlyTempSource, color='blue', legend_label ='Avg Min Temp')
 monthly_temp_plot.line(source=maxMonthlyTempSource, color='red', legend_label ='Avg Max Temp')
 
@@ -182,7 +171,7 @@ def update_plot(att, old, new):
         'y' : averages.maxTemp,
     }
     
-    monthly_temp_plot.title.text = "Yearly Average Temperatures for {year}".format(year = year)
+    monthly_temp_plot.title.text = "Perth Yearly Average Temperatures for {year}".format(year = year)
     minMonthlyTempSource.data = new_min_data
     maxMonthlyTempSource.data = new_max_data
     
@@ -225,10 +214,10 @@ maxSY1 = ColumnDataSource(data={'x': setup_year1_monthly_avg_data.index, 'y' : s
 minSY2 = ColumnDataSource(data={'x': setup_year2_monthly_avg_data.index, 'y' : setup_year2_monthly_avg_data.minTemp})
 maxSY2 = ColumnDataSource(data={'x': setup_year2_monthly_avg_data.index, 'y' : setup_year2_monthly_avg_data.maxTemp})
 
-temp_YearOverYear_plot = figure(height=600, width=1000)
+temp_YearOverYear_plot = figure(height=600, width=800)
 temp_YearOverYear_plot.xaxis.axis_label = 'Month'
 temp_YearOverYear_plot.yaxis.axis_label = 'Temperature (°C)'
-temp_YearOverYear_plot.title = 'Yearly Average Temperatures for {year1} and {year2}'.format(year1 = temp_year1_slider.value, year2 = temp_year2_slider.value)
+temp_YearOverYear_plot.title = 'Perth Yearly Average Temperatures for {year1} and {year2}'.format(year1 = temp_year1_slider.value, year2 = temp_year2_slider.value)
 
 
 minY1_line = temp_YearOverYear_plot.line(source=minSY1, color='blue')
@@ -299,7 +288,7 @@ def plot_selected_years(att, old, new):
     maxSY1.data = new_y1_max_data
     minSY2.data = new_y2_min_data
     maxSY2.data = new_y2_max_data
-    temp_YearOverYear_plot.title.text = "Yearly Average Temperatures for {year1} and {year2}".format(year1 = year1, year2 = year2)
+    temp_YearOverYear_plot.title.text = "Perth Yearly Average Temperatures for {year1} and {year2}".format(year1 = year1, year2 = year2)
     legendItems = legend.items
     legendItems[0] = LegendItem(label='Min Temp {year1}'.format(year1 = year1), renderers=[minY1_line, minY1_cross] )
     legendItems[1] = LegendItem(label='Max Temp {year1}'.format(year1 = year1), renderers=[maxY1_line, maxY1_cross] )
@@ -326,24 +315,12 @@ df_trim_minmax['maxTemp'] = df_trim_minmax.groupby(['year','month'])['Maximum te
 minTempRows = df_trim_minmax[df_trim_minmax['Minimum temperature (°C)'] == df_trim_minmax['minTemp']]
 maxTempRows = df_trim_minmax[df_trim_minmax['Maximum temperature (°C)'] == df_trim_minmax['maxTemp']]
 
-
-# Get mins and maxs
-#monthly_max_temps = df.groupby([df['Date'].dt.year, df['Date'].dt.month])['Maximum temperature (°C)'].max()
-#monthly_min_temps = df.groupby([df['Date'].dt.year, df['Date'].dt.month])['Minimum temperature (°C)'].min()
-
-
-# Combine the data 
-#monthly_MinMax_data = pd.DataFrame({'year': monthly_max_temps.index.get_level_values(0),
-#                             'month': monthly_max_temps.index.get_level_values(1),
-#                             'maxTemp': monthly_max_temps.values,
-#                             'minTemp': monthly_min_temps.values})
-
 monthly_MinMax_data = minTempRows.merge(maxTempRows, how="right")
 # Create the figure
-monthly_MinMax_plot = figure(height=600, width=1000)
+monthly_MinMax_plot = figure(height=600, width=800)
 
 # Update axes labels and title
-monthly_MinMax_plot.title = 'Highest and Lowest Temperatures Each Month'
+monthly_MinMax_plot.title = 'Perth Min & Max Temperatures Per Month'
 monthly_MinMax_plot.xaxis.axis_label = 'Year'
 monthly_MinMax_plot.yaxis.axis_label = 'Temperature (°C)'
 
@@ -392,7 +369,7 @@ monthly_MinMax_plot.add_tools(maxTemp_Hover)
 
 monthly_MinMax_plot_layout = row(monthly_MinMax_plot)
 
-#Highest and lowest point for each year all on one plot
+# Highest and lowest point for each year all on one plot
 # Step 1: Obtain the highest and lowest temperature of each year
 df_trim = df.loc[:,('Date', 'Minimum temperature (°C)', 'Maximum temperature (°C)')]
 df_trim['year'] = df['Date'].dt.year
@@ -404,10 +381,10 @@ minRows = df_trim[df_trim['Minimum temperature (°C)'] == df_trim['minTemp']]
 maxRows = df_trim[df_trim['Maximum temperature (°C)'] == df_trim['maxTemp']]
 
 # Create the figure
-yearly_MinMax_plot = figure(height=600, width=1000)
+yearly_MinMax_plot = figure(height=600, width=800)
 
 # Update axes labels and title
-yearly_MinMax_plot.title = 'Highest and Lowest Temperatures Each Year'
+yearly_MinMax_plot.title = 'Perth Min & Max Temperatures Per Year'
 yearly_MinMax_plot.xaxis.axis_label = 'Year'
 yearly_MinMax_plot.yaxis.axis_label = 'Temperature (°C)'
 
@@ -434,7 +411,6 @@ yearly_max_line = yearly_MinMax_plot.line(source=yearly_MinMax_maxSource, line_w
 yearly_MinMax_plot.xaxis.major_label_orientation = 'horizontal'
 yearly_MinMax_plot.xaxis.ticker.desired_num_ticks = 15
 
-#TODO - Add Date back into hover
 yearly_minTemp_Hover = HoverTool(tooltips=[('Date', '@date{%d/%m/%Y}'), ('Min Temp', '@y{0.0} °C')], formatters={
     '@date' : 'datetime',
 }, renderers=[yearly_min_circle, yearly_min_line])
