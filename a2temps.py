@@ -1,15 +1,17 @@
 #Imports
 import pandas as pd
-import numpy as np
 
-from python.src.Utils import *
+from Utils import *
 from bokeh.plotting import figure
-from bokeh.models import HoverTool, ColumnDataSource, Div, Slider, Range1d, PrintfTickFormatter, CustomJSTickFormatter, CustomJS, InlineStyleSheet, Button, CustomJS, SetValue, TabPanel, Tabs, DatetimeTickFormatter, Legend, LegendItem, Whisker
-from bokeh.layouts import column, row
+from bokeh.models import ColumnDataSource, DatetimeTickFormatter
+from bokeh.layouts import row
+import os
 
+main_dir = os.path.dirname(__file__)
+dataset_file_path = os.path.join(main_dir, 'res', 'all_cities.csv')
 
 # Dataframe
-df = pd.read_csv("./python/all_cities.csv")
+df = pd.read_csv(dataset_file_path)
 cities = ['adelaide', 'brisbane', 'darwin', 'hobart', 'melbourne', 'perth', 'sydney']
 df['date'] = pd.to_datetime(df['date'])
 

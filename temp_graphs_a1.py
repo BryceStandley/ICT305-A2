@@ -4,10 +4,13 @@ import pandas as pd
 from bokeh.plotting import figure
 from bokeh.models import HoverTool, ColumnDataSource, Div, Slider, Range1d, PrintfTickFormatter, CustomJSTickFormatter, CustomJS, InlineStyleSheet, Button, CustomJS, SetValue, TabPanel, Tabs, DatetimeTickFormatter, Legend, LegendItem
 from bokeh.layouts import column, row
+import os
 
+main_dir = os.path.dirname(__file__)
+dataset_file_path = os.path.join(main_dir, 'res', '305data.csv')
 
 #Read in data
-df = pd.read_csv('./python/305data.csv')
+df = pd.read_csv(dataset_file_path)
 
 # Convert the date column to datetime with the correct format
 df['Date'] = pd.to_datetime(df['Date'], format='%d/%m/%Y')

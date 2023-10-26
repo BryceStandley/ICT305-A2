@@ -1,11 +1,15 @@
 # Imports
-from temps import *
-from src.Utils import *
-from src.a2temps import *
+from temp_graphs_a1 import *
+from a2temps import *
 from bokeh.io import curdoc
+import os
+
+main_dir = os.path.dirname(__file__)
+
+titleDivFilePath = os.path.join(main_dir, 'res', 'titleDiv.html')
 
 # Load title HTML file
-with open('./python/src/titleDiv.html', 'r', encoding='utf-8') as f:
+with open(titleDivFilePath, 'r', encoding='utf-8') as f:
     titleDivContents = f.read()
 
 # Code used to load and combine the different csv files into a single csv
@@ -98,7 +102,9 @@ df_trim.fillna(value=0.0, inplace=True)
 df_trim.to_csv(path_or_buf="./all_cities.csv")
 '''
 
-df_trim = pd.read_csv("./python/all_cities.csv")
+dataset_file_path = os.path.join(main_dir, 'res', 'all_cities.csv')
+
+df_trim = pd.read_csv(dataset_file_path)
 
 # Default values
 default_capital = "perth"
@@ -114,7 +120,6 @@ data = df_trim[
 data2 = df_trim[
     (df_trim['year'] == default_year) & (df_trim['month'] == default_month) & (df_trim['city'] == default_sub_capital)]
 
-# Plot Setup
 # Setup plot source data and build plots
 trimmedMainSourceData = ColumnDataSource(data={
     'x': data.day,
@@ -163,7 +168,7 @@ cityDropdownMain = Dropdown(label="Capital City 1", button_type="success", menu=
 cityDropdownSub = Dropdown(label="Capital City 2", button_type="primary", menu=cityNames)
 cityTempsDropdown = Dropdown(label="Capital City", button_type="warning", menu=cityNames)
 
-tempData = df_trim[df_trim['city'] == currentlySelectedTempCapital][['date','year', '9amTemp']]
+tempData = df_trim[df_trim['city'] == currentlySelectedTempCapital][['date', 'year', '9amTemp']]
 tempScatterPlotData = ColumnDataSource(data={
     'date': tempData.date,
     '9amTemp': tempData['9amTemp'],
@@ -173,7 +178,6 @@ tempScatterPlotData = ColumnDataSource(data={
 tempScatterPlot = Selectable9amTempScatterPlot(currentlySelectedTempCapital)
 tempBoxPlot = Selectable9amTempsBoxPlot(currentlySelectedTempCapital)
 tempBoxPlot2Y = Selectable9amTempBoxPlot2Years(currentlySelectedTempCapital)
-
 
 # Creating the hover tools for the plot
 evapPlot.add_tools(CreateLinePlotHoverTool(('Evaporation', '@evap{%smm}'),
@@ -191,9 +195,9 @@ def update_plots(yearValue, monthValue, capitalMain, capitalSub):
     global trimmedMainSourceData, evapPlot, rainPlot, sunPlot
     # Check if all cities are being plotted
     d = df_trim[(df_trim['year'] == yearValue) & (df_trim['month'] == monthValue) & (
-                df_trim['city'] == capitalMain)].reset_index(drop=True)
+            df_trim['city'] == capitalMain)].reset_index(drop=True)
     d2 = df_trim[(df_trim['year'] == yearValue) & (df_trim['month'] == monthValue) & (
-                df_trim['city'] == capitalSub)].reset_index(drop=True)
+            df_trim['city'] == capitalSub)].reset_index(drop=True)
     # Only update the data of the plot if there's data to use
     if not d.empty or d2.empty:
         newData1 = {
@@ -265,6 +269,7 @@ def capitalSubDropdownOnClick(event):
     clampSliders()
     update_plots(year_slider.value, month_slider.value, currentlySelectedMainCapital, currentlySelectedSubCapital)
 
+
 def cityTempDropdownOnClick(event):
     global currentlySelectedTempCapital, tempScatterPlot, tempBoxPlot, tempBoxPlot2Y
     currentlySelectedTempCapital = event.item
@@ -325,18 +330,18 @@ monthly_MinMax_plot_layoutTempsTab = TabPanel(child=monthly_MinMax_plot_layout, 
 yearly_MinMax_plot_layoutTempsTab = TabPanel(child=yearly_MinMax_plot_layout, title='Yearly Min/Max')
 
 # TODO: Update to use a dropdown to select the city
-selectable9amScatterTempTab = TabPanel(child=column(row(cityTempsDropdown),tempScatterPlot), title='9am Scatter')
-selectable9amBoxplotTempTab = TabPanel(child=column(row(cityTempsDropdown),tempBoxPlot), title='9am Box')
-selectable9amBoxplot2YearsTempTab = TabPanel(child=column(row(cityTempsDropdown),tempBoxPlot2Y),
+selectable9amScatterTempTab = TabPanel(child=column(row(cityTempsDropdown), tempScatterPlot), title='9am Scatter')
+selectable9amBoxplotTempTab = TabPanel(child=column(row(cityTempsDropdown), tempBoxPlot), title='9am Box')
+selectable9amBoxplot2YearsTempTab = TabPanel(child=column(row(cityTempsDropdown), tempBoxPlot2Y),
                                              title='9am Box Year vs Year')
 
 perthTempsTab = TabPanel(child=Tabs(tabs=[janTempsTab, monthlyPlotTempsTab, monthlyAvgPlotTempsTab,
-                                          temp_YearOverYear_plotTempsTab,monthly_MinMax_plot_layoutTempsTab,
+                                          temp_YearOverYear_plotTempsTab, monthly_MinMax_plot_layoutTempsTab,
                                           yearly_MinMax_plot_layoutTempsTab]), title='Perth - A1')
 
-tempTabs = TabPanel(child=Tabs(tabs=[perthTempsTab, selectable9amScatterTempTab,selectable9amBoxplotTempTab,
+tempTabs = TabPanel(child=Tabs(tabs=[perthTempsTab, selectable9amScatterTempTab, selectable9amBoxplotTempTab,
                                      selectable9amBoxplot2YearsTempTab], margin=(10, 0, 0, 0)),
-    title='Temperature')
+                    title='Temperature')
 
 evapTab = CreateGraphTabPanel(cityDropdownMain, cityDropdownSub, year_slider, month_slider, evapPlot, "Evaporation")
 rainTab = CreateGraphTabPanel(cityDropdownMain, cityDropdownSub, year_slider, month_slider, rainPlot, "Rainfall")
