@@ -1,0 +1,1 @@
+python3 -m bokeh serve --allow-websocket-origin=3.104.38.226:5006 main.py
