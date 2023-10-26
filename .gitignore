@@ -42,6 +42,7 @@ compile_commands.json
 .envrc
 build
 dist
+venv
 
 # npm package
 /npm/dist

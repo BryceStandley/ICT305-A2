@@ -3,7 +3,7 @@ import pandas as pd
 
 from Utils import *
 from bokeh.plotting import figure
-from bokeh.models import ColumnDataSource, DatetimeTickFormatter
+from bokeh.models import ColumnDataSource, DatetimeTickFormatter, Legend, LegendItem
 from bokeh.layouts import row
 import os
 
@@ -50,21 +50,25 @@ def Perth9amTempatures():
 
 # Scatter plots for each state from 2012-2022
 # Takes a long time to load
-def Selectable9amTempScatterPlot(city: str):
-    # Get the 9am temperatures
-    cityTemps = df[df['city'] == city][['date', '9amTemp']]
-    cityTempsData = ColumnDataSource(data={
-        'date': cityTemps.date,
-        '9amTemp': cityTemps['9amTemp']
-    })
-
-    xmin, xmax = GetMinMax(cityTemps['date'])
-    ymin, ymax = GetMinMax(cityTemps['9amTemp'])
-
-    # Plot the scatter plot
+def Selectable9amTempScatterPlot(city: str, trimmedDataSource):
     plot = figure(height=600, width=800, x_axis_label='Date', y_axis_label='Temperature (°C)',
                   title=f'{city.capitalize()} 9am Temperatures')
-    plot.circle(x='date', y='9amTemp', source=cityTempsData, size=8, color='blue', legend_label=f'{city.capitalize()} 9am Temperature')
+
+    # Get the 9am temperatures
+    #cityTemps = df[df['city'] == city][['date', '9amTemp']]
+    #cityTempsData = ColumnDataSource(data={
+    #    'date': cityTemps.date,
+    #    '9amTemp': cityTemps['9amTemp']
+    #})
+
+    #plot.circle(x='date', y='9amTemp', source=trimmedDataSource, size=8, color='blue',
+    #                      legend_label=f'{city.capitalize()} 9am Temperature')
+    plot.circle(x='date', y='9amTemp', source=trimmedDataSource, size=8, color='blue')
+
+    xmin, xmax = GetMinMax(df['date'])
+    ymin, ymax = GetMinMax(df['9amTemp'])
+
+    # Plot the scatter plot
 
     plot.x_range.start = xmin
     plot.x_range.end = xmax
@@ -73,7 +77,8 @@ def Selectable9amTempScatterPlot(city: str):
 
     plot.xaxis.major_label_orientation = 'horizontal'
     plot.xaxis.formatter = DatetimeTickFormatter(days='%d', months="%m", years='%Y')
-    return row(plot)
+
+    return plot
 
 
 # Perth boxplot 2008-2023
@@ -121,20 +126,21 @@ def Perth9amTempsBoxPlot():
     return row(plot)
 
 
-def Selectable9amTempsBoxPlot(city: str):
-    # Get all 9am temperatures from PerthDF
-    cityTemps = df[df['city'] == city][['date', '9amTemp']].reset_index(drop=True)
+def Selectable9amTempsBoxPlot(city: str, trimmedDataSource):
+    '''
+    # Get all 9am temperatures
+    #cityTemps = df[df['city'] == city][['date', '9amTemp']].reset_index(drop=True)
 
     #data = pd.DataFrame(columnData.data)
 
-    qmin, q1, q2, q3, qmax = cityTemps['9amTemp'].quantile([0, 0.25, 0.5, 0.75, 1])
+    qmin, q1, q2, q3, qmax = trimmedDataSource.data['9amTemp'].quantile([0, 0.25, 0.5, 0.75, 1])
 
     iqr = q3 - q1
     upper = q3 + 1.5 * iqr
     lower = q1 - 1.5 * iqr
-    mean = cityTemps['9amTemp'].mean()
+    mean = trimmedDataSource.data['9amTemp'].mean()
 
-    out = cityTemps[(cityTemps['9amTemp'] > upper) | (cityTemps['9amTemp'] < lower)]
+    out = trimmedDataSource.data[(trimmedDataSource.data['9amTemp'] > upper) | (trimmedDataSource.data['9amTemp'] < lower)]
 
     outlier = []
     if not out.empty:
@@ -145,26 +151,38 @@ def Selectable9amTempsBoxPlot(city: str):
 
     hbar_height = (qmax - qmin) / 500
 
+    source = ColumnDataSource(data=dict(x=['Temperature (°C)'], upper=[upper], lower=[lower], q1=[q1], q2=[q2], q3=[q3], outlier_x=[outlier], outlier_y=[outlier]))
+'''
+
     # Create a box plot
     plot = figure(height=600, width=800, title=f'{city.capitalize()} Temperature at 9am (°C) from 2008 to 2023',
                   background_fill_color="#eaefef", y_axis_label='Temperature (°C)', x_range=['Temperature (°C)'])
 
-    plot.segment(['Temperature (°C)'], upper, ['Temperature (°C)'], q3, line_color='black')
-    plot.segment(['Temperature (°C)'], lower, ['Temperature (°C)'], q1, line_color='black')
+    #plot.segment(['Temperature (°C)'], upper, ['Temperature (°C)'], q3, line_color='black')
+    plot.segment(x0='x', y0='upper', x1='x', y1='q3', source=trimmedDataSource,  line_color='black')
+    #plot.segment(['Temperature (°C)'], lower, ['Temperature (°C)'], q1, line_color='black')
+    plot.segment(x0='x', y0='lower', x1='x', y1='q1', source=trimmedDataSource, line_color='black')
 
-    plot.vbar(['Temperature (°C)'], 0.7, q2, q3, line_color='black')
-    plot.vbar(['Temperature (°C)'], 0.7, q1, q2, line_color='black')
+    #plot.vbar(['Temperature (°C)'], 0.7, q2, q3, line_color='black')
+    #plot.vbar(['Temperature (°C)'], 0.7, q1, q2, line_color='black')
 
-    plot.rect(['Temperature (°C)'], lower, 0.2, hbar_height, line_color='black')
-    plot.rect(['Temperature (°C)'], upper, 0.2, hbar_height, line_color='black')
+    plot.vbar(x='x', width=0.7, top='q2', bottom='q3', source=trimmedDataSource, line_color='black')
+    plot.vbar(x='x', width=0.7, top='q1', bottom='q2', source=trimmedDataSource, line_color='black')
 
-    if not out.empty:
-        plot.circle(['Temperature (°C)'] * len(outlier), outlier, size=6, fill_alpha=0.6)
+    #plot.rect(['Temperature (°C)'], lower, 0.2, hbar_height, line_color='black')
+    #plot.rect(['Temperature (°C)'], upper, 0.2, hbar_height, line_color='black')
+    plot.rect(x='x', y='lower', width=0.2, height='hbar_height', source=trimmedDataSource, line_color='black')
+    plot.rect(x='x', y='upper', width=0.2, height='hbar_height', source=trimmedDataSource,  line_color='black')
 
-    plot.y_range.start = lower - 5
-    plot.y_range.end = upper + 5
 
-    return row(plot)
+
+    #if not out.empty:
+    #    plot.circle(['Temperature (°C)'] * len(outlier), outlier, size=6, fill_alpha=0.6)
+
+    #plot.y_range.start = trimmedDataSource.data['lower'] - 5
+    #plot.y_range.end = trimmedDataSource.data['upper'] + 5
+
+    return plot
 
 
 # Box plot for 2012 perth and 2022 perth
@@ -313,4 +331,4 @@ def Selectable9amTempBoxPlot2Years(city: str):
     plot.y_range.start = min(lowerY1 - 5, lowerY2 - 5)
     plot.y_range.end = max(upperY1 + 5, upperY2 + 5)
 
-    return row(plot)
+    return plot

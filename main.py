@@ -2,6 +2,7 @@
 from temp_graphs_a1 import *
 from a2temps import *
 from bokeh.io import curdoc
+from Utils import *
 import os
 
 main_dir = os.path.dirname(__file__)
@@ -12,99 +13,10 @@ titleDivFilePath = os.path.join(main_dir, 'res', 'titleDiv.html')
 with open(titleDivFilePath, 'r', encoding='utf-8') as f:
     titleDivContents = f.read()
 
-# Code used to load and combine the different csv files into a single csv
-'''
-# Define the folder path
-folder_path = "./python/ICT305_States"
-
-# Create DFs
-adelaideDF = pd.read_csv(os.path.join(folder_path, "Adelaide.csv"), encoding='latin1')
-brisbaneDF = pd.read_csv(os.path.join(folder_path, "Brisbane.csv"), encoding='latin1')
-darwinDF = pd.read_csv(os.path.join(folder_path, "Darwin.csv"), encoding='latin1')
-hobartDF = pd.read_csv(os.path.join(folder_path, "Hobart.csv"), encoding='latin1')
-perthDF = pd.read_csv(os.path.join(folder_path, "Perth.csv"), encoding='latin1')
-melbourneDF = pd.read_csv(os.path.join(folder_path, "Melbourne.csv"), encoding='latin1')
-sydneyDF = pd.read_csv(os.path.join(folder_path, "Sydney.csv"), encoding='latin1')
-
-# Rename columns because they have garbage ascii characters in their names
-new_columns = {
-    'ï»¿Date': 'Date',
-    'Minimum temperature (ÃÂ°C)': 'Min Temperature (°C)',
-    'Maximum temperature (ÃÂ°C)': 'Max Temperature (°C)',
-    'Rainfall (mm)': 'Rainfall (mm)',
-    'Evaporation (mm)': 'Evaporation (mm)',
-    'Sunshine (hours)': 'Sunshine (hours)',
-    'Direction of maximum wind gust ': 'Max Wind Gust Direction',
-    'Speed of maximum wind gust (km/h)': 'Max Wind Gust Speed (km/h)',
-    'Time of maximum wind gust': 'Time of Max Wind Gust',
-    '9am Temperature (ÃÂ°C)': '9am Temperature (°C)',
-    '9am relative humidity (%)': '9am Relative Humidity (%)',
-    '9am cloud amount (oktas)': '9am Cloud Amount (oktas)',
-    '9am wind direction': '9am Wind Direction',
-    '9am wind speed (km/h)': '9am Wind Speed (km/h)',
-    '9am MSL pressure (hPa)': '9am MSL Pressure (hPa)',
-    '3pm Temperature (ÃÂ°C)': '3pm Temperature (°C)',
-    '3pm relative humidity (%)': '3pm Relative Humidity (%)',
-    '3pm cloud amount (oktas)': '3pm Cloud Amount (oktas)',
-    '3pm wind direction': '3pm Wind Direction',
-    '3pm wind speed (km/h)': '3pm Wind Speed (km/h)',
-    '3pm MSL pressure (hPa)': '3pm MSL Pressure (hPa)'
-}
-
-# Rename columns in each DataFrame
-adelaideDF = adelaideDF.rename(columns=new_columns)
-brisbaneDF = brisbaneDF.rename(columns=new_columns)
-darwinDF = darwinDF.rename(columns=new_columns)
-hobartDF = hobartDF.rename(columns=new_columns)
-perthDF = perthDF.rename(columns=new_columns)
-melbourneDF = melbourneDF.rename(columns=new_columns)
-sydneyDF = sydneyDF.rename(columns=new_columns)
-# Adding the City to each frame
-adelaideDF.insert(1, "city", "adelaide")
-brisbaneDF.insert(1, "city", "brisbane")
-darwinDF.insert(1, "city", "darwin")
-hobartDF.insert(1, "city", "hobart")
-perthDF.insert(1, "city", "perth")
-melbourneDF.insert(1, "city", "melbourne")
-sydneyDF.insert(1, "city", "sydney")
-
-# Grouping the data
-dataframes = [adelaideDF, brisbaneDF, darwinDF, hobartDF, melbourneDF, perthDF, sydneyDF]
-all_cities_df = pd.concat(dataframes)
-
-# Pre-process and update the dates of the dataframe to be the correct format
-all_cities_df["Date"] = pd.to_datetime(all_cities_df["Date"], format='%d/%m/%Y')
-
-# Pre-processing Data
-# Add day, month and year columns
-all_cities_df['day'] = all_cities_df['Date'].dt.day
-all_cities_df['month'] = all_cities_df['Date'].dt.month
-all_cities_df['year'] = all_cities_df['Date'].dt.year
-
-# Trim Data
-df_trim = all_cities_df.loc[:, ('Date', 'city', 'day', 'month', 'year', 'Evaporation (mm)', 'Rainfall (mm)',
-                                'Sunshine (hours)', 'Min Temperature (°C)', 'Max Temperature (°C)',
-                                'Max Wind Gust Direction',
-                                'Max Wind Gust Speed (km/h)', 'Time of Max Wind Gust', '9am Temperature (°C)',
-                                '9am Relative Humidity (%)',
-                                '9am Cloud Amount (oktas)', '9am Wind Direction', '9am Wind Speed (km/h)',
-                                '9am MSL Pressure (hPa)',
-                                '3pm Temperature (°C)', '3pm Relative Humidity (%)', '3pm Cloud Amount (oktas)',
-                                '3pm Wind Direction',
-                                '3pm Wind Speed (km/h)', '3pm MSL Pressure (hPa)')]
-
-df_trim.columns = ['date', 'city', 'day', 'month', 'year', 'evap', 'rain', 'sun', 'minTemp', 'maxTemp',
-                   'maxWindGustDir', 'maxWindGustSpeed', 'maxWindGustTime', '9amTemp', '9amRelHum', '9amClouds',
-                   '9amWindDir', '9amWindSpeed', '9amMSL', '3pmTemp', '3pmRelHumid', '3pmClouds', '3pmWindDir',
-                   '3pmWindSpeed', '3pmMSL']
-
-df_trim.fillna(value=0.0, inplace=True)
-df_trim.to_csv(path_or_buf="./all_cities.csv")
-'''
-
 dataset_file_path = os.path.join(main_dir, 'res', 'all_cities.csv')
 
 df_trim = pd.read_csv(dataset_file_path)
+df_trim['date'] = pd.to_datetime(df_trim['date'])
 
 # Default values
 default_capital = "perth"
@@ -119,6 +31,11 @@ data = df_trim[
     (df_trim['year'] == default_year) & (df_trim['month'] == default_month) & (df_trim['city'] == default_capital)]
 data2 = df_trim[
     (df_trim['year'] == default_year) & (df_trim['month'] == default_month) & (df_trim['city'] == default_sub_capital)]
+data3 = df_trim[(df_trim['city'] == default_temp_capital)]
+
+#Define Temp scatter and box plot functions
+
+
 
 # Setup plot source data and build plots
 trimmedMainSourceData = ColumnDataSource(data={
@@ -137,10 +54,18 @@ trimmedSubSourceData = ColumnDataSource(data={
     'city': data2.city
 })
 
+trimmedTempSourceData = ColumnDataSource(data={
+    'date': data3.date,
+    'year': data3.year,
+    '9amTemp': data3['9amTemp']
+})
+
+# Default selected cities
 currentlySelectedMainCapital = default_capital
 currentlySelectedSubCapital = default_sub_capital
 currentlySelectedTempCapital = default_temp_capital
 
+# Default Evaporation, Rain and Sunshine plots
 evapPlot = CreateLinePlot(
     currentlySelectedMainCapital.capitalize() + ' vs ' + currentlySelectedSubCapital.capitalize() + " Evaporation in {month} {year}",
     df_trim, trimmedMainSourceData, trimmedSubSourceData, default_month,
@@ -153,6 +78,9 @@ sunPlot = CreateLinePlot(
     currentlySelectedMainCapital.capitalize() + ' vs ' + currentlySelectedSubCapital.capitalize() + " Sunshine in {month} {year}",
     df_trim, trimmedMainSourceData, trimmedSubSourceData, default_month, default_year,
     "x", "sun", "Day of the Month", "Sunshine", '%s hours')
+
+
+
 
 # Plot Layouts
 year_slider = Slider(start=min(df_trim.year), end=max(df_trim.year), step=1, value=default_year, title='Year')
@@ -174,10 +102,65 @@ tempScatterPlotData = ColumnDataSource(data={
     '9amTemp': tempData['9amTemp'],
     'year': tempData.year
 })
+tempBoxPlotData = []
+def boxplot_data_update():
+    global tempBoxPlotData
+    qmin, q1, q2, q3, qmax = df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'].quantile([0, 0.25, 0.5, 0.75, 1])
 
-tempScatterPlot = Selectable9amTempScatterPlot(currentlySelectedTempCapital)
-tempBoxPlot = Selectable9amTempsBoxPlot(currentlySelectedTempCapital)
+    iqr = q3 - q1
+    upper = q3 + 1.5 * iqr
+    lower = q1 - 1.5 * iqr
+
+    out = (df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'] > upper) | (df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'] < lower)
+
+    #outlier = []
+    #if not out.empty:
+    #    outlier = list(out.values)
+
+    upper = min(qmax, upper)
+    lower = max(qmin, lower)
+
+    hbar_height = (qmax - qmin) / 500
+
+    tempBoxPlotData = ColumnDataSource(
+        data=dict(x=['Temperature (°C)'], upper=[upper], lower=[lower], q1=[q1], q2=[q2], q3=[q3], hbar_height=[hbar_height]))
+
+
+def boxplot_data():
+    global tempBoxPlotData
+    qmin, q1, q2, q3, qmax = df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'].quantile([0, 0.25, 0.5, 0.75, 1])
+
+    iqr = q3 - q1
+    upper = q3 + 1.5 * iqr
+    lower = q1 - 1.5 * iqr
+
+    out = (df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'] > upper) | (df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'] < lower)
+
+    #outlier = []
+    #if not out.empty:
+    #    outlier = list(out.values)
+
+    upper = min(qmax, upper)
+    lower = max(qmin, lower)
+
+    hbar_height = (qmax - qmin) / 500
+
+    newData = {
+        'x': 'Temperature (°C)',
+        'upper': upper,
+        'lower': lower,
+        'q1': q1,
+        'q2': q2,
+        'q3': q3,
+        'hbar_height': hbar_height
+    }
+    tempBoxPlotData.data = dict(newData)
+
+tempScatterPlot = Selectable9amTempScatterPlot(currentlySelectedTempCapital, trimmedTempSourceData)
+boxplot_data_update()
+tempBoxPlot = Selectable9amTempsBoxPlot(currentlySelectedTempCapital, tempBoxPlotData)
 tempBoxPlot2Y = Selectable9amTempBoxPlot2Years(currentlySelectedTempCapital)
+
 
 # Creating the hover tools for the plot
 evapPlot.add_tools(CreateLinePlotHoverTool(('Evaporation', '@evap{%smm}'),
@@ -269,21 +252,23 @@ def capitalSubDropdownOnClick(event):
     clampSliders()
     update_plots(year_slider.value, month_slider.value, currentlySelectedMainCapital, currentlySelectedSubCapital)
 
-
 def cityTempDropdownOnClick(event):
     global currentlySelectedTempCapital, tempScatterPlot, tempBoxPlot, tempBoxPlot2Y
     currentlySelectedTempCapital = event.item
 
-    newData = dict(
-        x=tempData.date,
-        y=tempData['9amTemp'],
-        year=tempData.year
-    )
+    d = df_trim[(df_trim['city'] == currentlySelectedTempCapital)]
 
-    tempScatterPlotData.data = newData
-    tempScatterPlot = Selectable9amTempScatterPlot(currentlySelectedTempCapital)
-    tempBoxPlot = Selectable9amTempsBoxPlot(currentlySelectedTempCapital)
-    tempBoxPlot2Y = Selectable9amTempBoxPlot2Years(currentlySelectedTempCapital)
+    newData = {
+        'date': d.date,
+        'year': d.year,
+        '9amTemp': d['9amTemp']
+    }
+
+    trimmedTempSourceData.data = dict(newData)
+    tempScatterPlot.title.text = f'{currentlySelectedTempCapital.capitalize()} 9am Temperatures'
+
+    boxplot_data()
+
 
 
 def clampSliders():
