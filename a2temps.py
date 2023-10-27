@@ -152,35 +152,35 @@ def Selectable9amTempsBoxPlot(city: str, trimmedDataSource):
     hbar_height = (qmax - qmin) / 500
 
     source = ColumnDataSource(data=dict(x=['Temperature (°C)'], upper=[upper], lower=[lower], q1=[q1], q2=[q2], q3=[q3], outlier_x=[outlier], outlier_y=[outlier]))
-'''
+    '''
+
+    y1 = min(trimmedDataSource.data['year1'])
+    y2 = max(trimmedDataSource.data['year2'])
 
     # Create a box plot
-    plot = figure(height=600, width=800, title=f'{city.capitalize()} Temperature at 9am (°C) from 2008 to 2023',
+    plot = figure(height=600, width=800, title=f'{city.capitalize()} Temperature at 9am (°C) from {y1} to {y2}',
                   background_fill_color="#eaefef", y_axis_label='Temperature (°C)', x_range=['Temperature (°C)'])
 
-    #plot.segment(['Temperature (°C)'], upper, ['Temperature (°C)'], q3, line_color='black')
-    plot.segment(x0='x', y0='upper', x1='x', y1='q3', source=trimmedDataSource,  line_color='black')
-    #plot.segment(['Temperature (°C)'], lower, ['Temperature (°C)'], q1, line_color='black')
-    plot.segment(x0='x', y0='lower', x1='x', y1='q1', source=trimmedDataSource, line_color='black')
+    plot.segment(x0='x3', y0='upper3', x1='x3', y1='q3_3', source=trimmedDataSource,  line_color='black')
+    plot.segment(x0='x3', y0='lower3', x1='x3', y1='q1_3', source=trimmedDataSource, line_color='black')
 
-    #plot.vbar(['Temperature (°C)'], 0.7, q2, q3, line_color='black')
-    #plot.vbar(['Temperature (°C)'], 0.7, q1, q2, line_color='black')
+    plot.vbar(x='x3', width=0.7, top='q2_3', bottom='q3_3', source=trimmedDataSource, line_color='black')
+    plot.vbar(x='x3', width=0.7, top='q1_3', bottom='q2_3', source=trimmedDataSource, line_color='black')
 
-    plot.vbar(x='x', width=0.7, top='q2', bottom='q3', source=trimmedDataSource, line_color='black')
-    plot.vbar(x='x', width=0.7, top='q1', bottom='q2', source=trimmedDataSource, line_color='black')
+    plot.rect(x='x3', y='lower3', width=0.2, height='hbar_height_3', source=trimmedDataSource, line_color='black')
+    plot.rect(x='x3', y='upper3', width=0.2, height='hbar_height_3', source=trimmedDataSource,  line_color='black')
 
-    #plot.rect(['Temperature (°C)'], lower, 0.2, hbar_height, line_color='black')
-    #plot.rect(['Temperature (°C)'], upper, 0.2, hbar_height, line_color='black')
-    plot.rect(x='x', y='lower', width=0.2, height='hbar_height', source=trimmedDataSource, line_color='black')
-    plot.rect(x='x', y='upper', width=0.2, height='hbar_height', source=trimmedDataSource,  line_color='black')
+    ystart = min(trimmedDataSource.data['lower3']) - 5
+    yend = max(trimmedDataSource.data['upper3']) + 5
 
+    plot.y_range.start = ystart
+    plot.y_range.end = yend
 
+    plot.xgrid.grid_line_color = None
 
-    #if not out.empty:
-    #    plot.circle(['Temperature (°C)'] * len(outlier), outlier, size=6, fill_alpha=0.6)
-
-    #plot.y_range.start = trimmedDataSource.data['lower'] - 5
-    #plot.y_range.end = trimmedDataSource.data['upper'] + 5
+    plot.ygrid.grid_line_color = 'gray'
+    plot.ygrid.grid_line_alpha = 0.5
+    plot.ygrid.grid_line_width = 2
 
     return plot
 
@@ -258,7 +258,8 @@ def Perth9amTempBoxPlot2Years():
     return row(plot)
 
 
-def Selectable9amTempBoxPlot2Years(city: str):
+def Selectable9amTempBoxPlot2Years(city: str, trimmedDataSource):
+    '''
     # Get all 9am temperatures from PerthDF
     y1 = min(df[(df['city'] == city)]['year'])
     # y1 = min(columnData.data['year'])
@@ -296,39 +297,49 @@ def Selectable9amTempBoxPlot2Years(city: str):
     lowerY2 = max(qminY2, lowerY2)
     hbar_heightY2 = (qmaxY2 - qminY2) / 500
 
-    xAxisNameY1 = 'Temperature (°C) 2012'
-    xAxisNameY2 = 'Temperature (°C) 2022'
+
+    '''
+
+    y1 = min(trimmedDataSource.data['year1'])
+    y2 = max(trimmedDataSource.data['year2'])
+    xAxisNameY1 = f'Temperature (°C) {y1}'
+    xAxisNameY2 = f'Temperature (°C) {y2}'
+    # Create a box plot
+    plot = figure(height=600, width=800, title=f'{city.capitalize()} Temperature at 9am (°C) {y1} and {y2}',
+                  background_fill_color="#eaefef", y_axis_label='Temperature (°C)', x_range=[xAxisNameY1, xAxisNameY2])
 
     # Create a box plot
     # Year 1
-    plot = figure(height=600, width=800, title=f'{city.capitalize()} Temperature at 9am (°C) in {y1} and {y2}',
-                  background_fill_color="#eaefef", y_axis_label='Temperature (°C)', x_range=[xAxisNameY1, xAxisNameY2])
-    plot.segment([xAxisNameY1], upperY1, [xAxisNameY1], q3Y1, line_color='black')
-    plot.segment([xAxisNameY1], lowerY1, [xAxisNameY1], q1Y1, line_color='black')
+    plot.segment(x0='x1', y0='upper1', x1='x1', y1='q3_1', source=trimmedDataSource, line_color='black')
+    plot.segment(x0='x1', y0='lower1', x1='x1', y1='q1_1', source=trimmedDataSource, line_color='black')
 
-    plot.vbar([xAxisNameY1], 0.7, q2Y1, q3Y1, color='blue', line_color='black')
-    plot.vbar([xAxisNameY1], 0.7, q1Y1, q2Y1, color='blue', line_color='black')
+    plot.vbar(x='x1', width=0.7, top='q2_1', bottom='q3_1', source=trimmedDataSource, line_color='black')
+    plot.vbar(x='x1', width=0.7, top='q1_1', bottom='q2_1', source=trimmedDataSource, line_color='black')
 
-    plot.rect([xAxisNameY1], lowerY1, 0.2, hbar_heightY1, color='blue', line_color='black')
-    plot.rect([xAxisNameY1], upperY1, 0.2, hbar_heightY1, color='blue', line_color='black')
-
-    if not outY1.empty:
-        plot.circle([xAxisNameY1] * len(outlierY1), outlierY1, size=6, fill_alpha=0.6)
+    plot.rect(x='x1', y='lower1', width=0.2, height='hbar_height_1', source=trimmedDataSource, line_color='black')
+    plot.rect(x='x1', y='upper1', width=0.2, height='hbar_height_1', source=trimmedDataSource, line_color='black')
 
     # Year 2
-    plot.segment([xAxisNameY2], upperY2, [xAxisNameY2], q3Y2, line_color='black')
-    plot.segment([xAxisNameY2], lowerY2, [xAxisNameY2], q1Y2, line_color='black')
+    plot.segment(x0='x2', y0='upper2', x1='x2', y1='q3_2', source=trimmedDataSource, line_color='black')
+    plot.segment(x0='x2', y0='lower2', x1='x2', y1='q1_2', source=trimmedDataSource, line_color='black')
 
-    plot.vbar([xAxisNameY2], 0.7, q2Y2, q3Y2, color='red', line_color='black')
-    plot.vbar([xAxisNameY2], 0.7, q1Y2, q2Y2, color='red', line_color='black')
+    plot.vbar(x='x2', width=0.7, top='q2_2', bottom='q3_2', source=trimmedDataSource, color='red', line_color='black')
+    plot.vbar(x='x2', width=0.7, top='q1_2', bottom='q2_2', source=trimmedDataSource, color='red', line_color='black')
 
-    plot.rect([xAxisNameY2], lowerY2, 0.2, hbar_heightY2, color='red', line_color='black')
-    plot.rect([xAxisNameY2], upperY2, 0.2, hbar_heightY2, color='red', line_color='black')
+    plot.rect(x='x2', y='lower2', width=0.2, height='hbar_height_2', source=trimmedDataSource, line_color='black')
+    plot.rect(x='x2', y='upper2', width=0.2, height='hbar_height_2', source=trimmedDataSource, line_color='black')
 
-    if not outY2.empty:
-        plot.circle([xAxisNameY2] * len(outlierY2), outlierY2, size=6, fill_alpha=0.6)
 
-    plot.y_range.start = min(lowerY1 - 5, lowerY2 - 5)
-    plot.y_range.end = max(upperY1 + 5, upperY2 + 5)
+    ystart = min((min(trimmedDataSource.data['lower1'])) - 5, (min(trimmedDataSource.data['lower2'])) - 5)
+    yend = max((max(trimmedDataSource.data['upper1'])) + 5, (max(trimmedDataSource.data['upper2'])) + 5)
+
+    plot.y_range.start = ystart
+    plot.y_range.end = yend
+
+    plot.xgrid.grid_line_color = None
+
+    plot.ygrid.grid_line_color = 'gray'
+    plot.ygrid.grid_line_alpha = 0.5
+    plot.ygrid.grid_line_width = 2
 
     return plot

@@ -4,6 +4,7 @@ from a2temps import *
 from bokeh.io import curdoc
 from Utils import *
 import os
+from bokeh.models import FactorRange
 
 main_dir = os.path.dirname(__file__)
 
@@ -32,10 +33,6 @@ data = df_trim[
 data2 = df_trim[
     (df_trim['year'] == default_year) & (df_trim['month'] == default_month) & (df_trim['city'] == default_sub_capital)]
 data3 = df_trim[(df_trim['city'] == default_temp_capital)]
-
-#Define Temp scatter and box plot functions
-
-
 
 # Setup plot source data and build plots
 trimmedMainSourceData = ColumnDataSource(data={
@@ -102,64 +99,117 @@ tempScatterPlotData = ColumnDataSource(data={
     '9amTemp': tempData['9amTemp'],
     'year': tempData.year
 })
-tempBoxPlotData = []
+
+# 1 = Min year of city, 2 = Max year of city, 3 = All data from city
+tempBoxPlotData = ColumnDataSource(data={
+    'x1': ['Temperature (°C) 2020'],
+    'upper1': [10],
+    'lower1': [1],
+    'q1_1': [2],
+    'q2_1': [3],
+    'q3_1': [4],
+    'hbar_height_1': [0.05],
+    'year1': [2020],
+    'x2': ['Temperature (°C) 2021'],
+    'upper2': [10],
+    'lower2': [1],
+    'q1_2': [2],
+    'q2_2': [3],
+    'q3_2': [4],
+    'hbar_height_2': [0.05],
+    'year2': [2021],
+    'x3': ['Temperature (°C)'],
+    'upper3': [10],
+    'lower3': [1],
+    'q1_3': [2],
+    'q2_3': [3],
+    'q3_3': [4],
+    'hbar_height_3': [0.05]
+})
+
+# Recalculate both min and max year box plot data to use for both box plots
 def boxplot_data_update():
-    global tempBoxPlotData
-    qmin, q1, q2, q3, qmax = df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'].quantile([0, 0.25, 0.5, 0.75, 1])
+    global tempBoxPlotData, currentlySelectedTempCapital
 
-    iqr = q3 - q1
-    upper = q3 + 1.5 * iqr
-    lower = q1 - 1.5 * iqr
+    min_year = min(df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['year'])
+    max_year = max(df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['year'])
 
-    out = (df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'] > upper) | (df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'] < lower)
+    # Year 1
+    qminY1, q1Y1, q2Y1, q3Y1, qmaxY1 = df_trim[(df_trim['city'] == currentlySelectedTempCapital) & (df_trim['year'] == min_year)]['9amTemp'].quantile([0, 0.25, 0.5, 0.75, 1])
 
-    #outlier = []
-    #if not out.empty:
-    #    outlier = list(out.values)
+    iqrY1 = q3Y1 - q1Y1
+    upperY1 = q3Y1 + 1.5 * iqrY1
+    lowerY1 = q1Y1 - 1.5 * iqrY1
 
-    upper = min(qmax, upper)
-    lower = max(qmin, lower)
+    #out = (df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'] > upper) | (df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'] < lower)
 
-    hbar_height = (qmax - qmin) / 500
+    upperY1 = min(qmaxY1, upperY1)
+    lowerY1 = max(qminY1, lowerY1)
 
-    tempBoxPlotData = ColumnDataSource(
-        data=dict(x=['Temperature (°C)'], upper=[upper], lower=[lower], q1=[q1], q2=[q2], q3=[q3], hbar_height=[hbar_height]))
+    hbar_heightY1 = (qmaxY1 - qminY1) / 500
 
+    # Year 2
+    qminY2, q1Y2, q2Y2, q3Y2, qmaxY2 = df_trim[(df_trim['city'] == currentlySelectedTempCapital) & (df_trim['year'] == max_year)]['9amTemp'].quantile(
+        [0, 0.25, 0.5, 0.75, 1])
 
-def boxplot_data():
-    global tempBoxPlotData
-    qmin, q1, q2, q3, qmax = df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'].quantile([0, 0.25, 0.5, 0.75, 1])
+    iqrY2 = q3Y2 - q1Y2
+    upperY2 = q3Y2 + 1.5 * iqrY2
+    lowerY2 = q1Y2 - 1.5 * iqrY2
 
-    iqr = q3 - q1
-    upper = q3 + 1.5 * iqr
-    lower = q1 - 1.5 * iqr
+    # out = (df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'] > upper) | (df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'] < lower)
 
-    out = (df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'] > upper) | (df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'] < lower)
+    upperY2 = min(qmaxY2, upperY2)
+    lowerY2 = max(qminY2, lowerY2)
 
-    #outlier = []
-    #if not out.empty:
-    #    outlier = list(out.values)
+    hbar_heightY2 = (qmaxY2 - qminY2) / 500
 
-    upper = min(qmax, upper)
-    lower = max(qmin, lower)
+    # Year 3 / box plot data for all data of the city
+    qminY3, q1Y3, q2Y3, q3Y3, qmaxY3 = df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'].quantile(
+        [0, 0.25, 0.5, 0.75, 1])
 
-    hbar_height = (qmax - qmin) / 500
+    iqrY3 = q3Y3 - q1Y3
+    upperY3 = q3Y3 + 1.5 * iqrY3
+    lowerY3 = q1Y3 - 1.5 * iqrY3
+
+    # out = (df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'] > upper) | (df_trim[(df_trim['city'] == currentlySelectedTempCapital)]['9amTemp'] < lower)
+
+    upperY3 = min(qmaxY3, upperY3)
+    lowerY3 = max(qminY3, lowerY3)
+
+    hbar_heightY3 = (qmaxY3 - qminY3) / 500
 
     newData = {
-        'x': 'Temperature (°C)',
-        'upper': upper,
-        'lower': lower,
-        'q1': q1,
-        'q2': q2,
-        'q3': q3,
-        'hbar_height': hbar_height
+        'x1': [f'Temperature (°C) {min_year}'],
+        'upper1': [upperY1],
+        'lower1': [lowerY1],
+        'q1_1': [q1Y1],
+        'q2_1': [q2Y1],
+        'q3_1': [q3Y1],
+        'hbar_height_1': [hbar_heightY1],
+        'year1': [min_year],
+        'x2': [f'Temperature (°C) {max_year}'],
+        'upper2': [upperY2],
+        'lower2': [lowerY2],
+        'q1_2': [q1Y2],
+        'q2_2': [q2Y2],
+        'q3_2': [q3Y2],
+        'hbar_height_2': [hbar_heightY2],
+        'year2': [max_year],
+        'x3': ['Temperature (°C)'],
+        'upper3': [upperY3],
+        'lower3': [lowerY3],
+        'q1_3': [q1Y3],
+        'q2_3': [q2Y3],
+        'q3_3': [q3Y3],
+        'hbar_height_3': [hbar_heightY3]
     }
     tempBoxPlotData.data = dict(newData)
+
 
 tempScatterPlot = Selectable9amTempScatterPlot(currentlySelectedTempCapital, trimmedTempSourceData)
 boxplot_data_update()
 tempBoxPlot = Selectable9amTempsBoxPlot(currentlySelectedTempCapital, tempBoxPlotData)
-tempBoxPlot2Y = Selectable9amTempBoxPlot2Years(currentlySelectedTempCapital)
+tempBoxPlot2Y = Selectable9amTempBoxPlot2Years(currentlySelectedTempCapital, tempBoxPlotData)
 
 
 # Creating the hover tools for the plot
@@ -173,6 +223,8 @@ sunPlot.add_tools(CreateLinePlotHoverTool(('Sunshine', '@sun{%s hours}'),
                                           [('Rainfall', '@rain{%smm}'), ('Evaporation', '@evap{%smm}'),
                                            ('City', '@city')]))
 
+tempBoxPlot.add_tools(HoverTool(tooltips=[('Upper', '@upper3'), ('Lower', '@lower3'), ('Q1', '@q1_3'), ('Q2', '@q2_3'), ('Q3', '@q3_3')]))
+tempBoxPlot2Y.add_tools(HoverTool(tooltips=[('Upper Y1', '@upper1'), ('Lower Y1', '@lower1'), ('Q1  Y1', '@q1_1'), ('Q2 Y1', '@q2_1'), ('Q3 Y1', '@q3_1'), ('Upper Y2', '@upper2'), ('Lower Y2', '@lower2'), ('Q1  Y2', '@q1_2'), ('Q2 Y2', '@q2_2'), ('Q3 Y2', '@q3_2')]))
 
 def update_plots(yearValue, monthValue, capitalMain, capitalSub):
     global trimmedMainSourceData, evapPlot, rainPlot, sunPlot
@@ -265,11 +317,18 @@ def cityTempDropdownOnClick(event):
     }
 
     trimmedTempSourceData.data = dict(newData)
-    tempScatterPlot.title.text = f'{currentlySelectedTempCapital.capitalize()} 9am Temperatures'
+    tempScatterPlot.title.text = f'{currentlySelectedTempCapital.capitalize()} Temperature at 9am (°C)'
 
-    boxplot_data()
+    boxplot_data_update()
+    tempBoxPlot.title.text = f'{currentlySelectedTempCapital.capitalize()} Average Temperature at 9am (°C)'
 
-
+    y1 = min(df_trim[df_trim['city'] == currentlySelectedTempCapital]['year'])
+    y2 = max(df_trim[df_trim['city'] == currentlySelectedTempCapital]['year'])
+    xAxisNameY1 = f'Temperature (°C) {y1}'
+    xAxisNameY2 = f'Temperature (°C) {y2}'
+    #print(f'{currentlySelectedTempCapital} - min: {y1} - max: {y2}')
+    tempBoxPlot2Y.title.text = f'{currentlySelectedTempCapital.capitalize()} Temperature at 9am (°C) {y1} and {y2}'
+    tempBoxPlot2Y.x_range.factors = [xAxisNameY1, xAxisNameY2]
 
 def clampSliders():
     global year_slider, month_slider, currentlySelectedMainCapital, df_trim
