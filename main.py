@@ -1,4 +1,8 @@
 # Imports
+import asyncio
+from threading import Thread
+
+
 from temp_graphs_a1 import *
 from a2temps import *
 from bokeh.io import curdoc
@@ -7,10 +11,36 @@ import os
 from bokeh.models import FactorRange
 from bokeh.server.server import Server
 
+from tornado.httpserver import HTTPServer
+from tornado.ioloop import IOLoop
+from flask import Flask, render_template
+from bokeh.application import Application
+from bokeh.application.handlers import FunctionHandler
+from bokeh.embed import server_document
+from bokeh.layouts import column
+from bokeh.models import ColumnDataSource, Slider
+from bokeh.plotting import figure
+from bokeh.sampledata.sea_surface_temperature import sea_surface_temperature
+from bokeh.server.server import BaseServer
+from bokeh.server.tornado import BokehTornado
+from bokeh.server.util import bind_sockets
+from bokeh.themes import Theme
+
+if __name__ == '__main__':
+    print('This script is intended to be run with gunicorn. e.g.')
+    print()
+    print('    gunicorn -w 4 flask_gunicorn_embed:app')
+    print()
+    print('will start the app on four processes')
+    import sys
+    sys.exit()
+
 main_dir = os.path.dirname(__file__)
 
+app = Flask(__name__)
 
-def generateDocument(doc):
+
+def bkapp(doc):
 
     titleDivFilePath = os.path.join(main_dir, 'res', 'titleDiv.html')
 
@@ -393,14 +423,31 @@ def generateDocument(doc):
                               margin=(50, 0, 50, 50))
 
     doc.add_root(layout)
-    doc.theme = 'dark_minimal'
+    # doc.theme = 'dark_minimal'
     doc.title = "ICT305 Assignment 2 - Pink Fluffy Unicorns"
+    doc.theme = Theme(filename='theme.yaml')
 
-server = Server({'/': generateDocument}, num_procs=1)
-server.start()
 
-if __name__ == '__main__':
-    print('Opening Bokeh application on http://localhost:5006/')
+bkapp = Application(FunctionHandler(bkapp))
 
-    server.io_loop.add_callback(server.show, "/")
+sockets, port = bind_sockets('localhost', 0)
+
+@app.route('/', methods=['GET'])
+def bkapp_page():
+    script = server_document(f'http://localhost:{port}/bkapp')
+    return render_template("embed.html", script=script, template="Flask")
+
+def bk_worker():
+    asyncio.set_event_loop(asyncio.new_event_loop())
+
+    bokeh_tornado = BokehTornado({'/bkapp': bkapp}, extra_websocket_origins=["localhost:8000", "murdoch.vectorpixel.net"])
+    bokeh_http = HTTPServer(bokeh_tornado)
+    bokeh_http.add_sockets(sockets)
+
+    server = BaseServer(IOLoop.current(), bokeh_tornado, bokeh_http)
+    server.start()
     server.io_loop.start()
+
+t = Thread(target=bk_worker)
+t.daemon = True
+t.start()
