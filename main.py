@@ -1,44 +1,24 @@
 # Imports
-import asyncio
-from threading import Thread
-
-
 from temp_graphs_a1 import *
 from a2temps import *
 from bokeh.io import curdoc
 from Utils import *
 import os
-from bokeh.models import FactorRange
-from bokeh.server.server import Server
+from threading import Thread
 
-from tornado.httpserver import HTTPServer
-from tornado.ioloop import IOLoop
 from flask import Flask, render_template
-from bokeh.application import Application
-from bokeh.application.handlers import FunctionHandler
+from tornado.ioloop import IOLoop
+
 from bokeh.embed import server_document
 from bokeh.layouts import column
 from bokeh.models import ColumnDataSource, Slider
 from bokeh.plotting import figure
-from bokeh.sampledata.sea_surface_temperature import sea_surface_temperature
-from bokeh.server.server import BaseServer
-from bokeh.server.tornado import BokehTornado
-from bokeh.server.util import bind_sockets
+from bokeh.server.server import Server
 from bokeh.themes import Theme
-
-if __name__ == '__main__':
-    print('This script is intended to be run with gunicorn. e.g.')
-    print()
-    print('    gunicorn -w 4 flask_gunicorn_embed:app')
-    print()
-    print('will start the app on four processes')
-    import sys
-    sys.exit()
-
-main_dir = os.path.dirname(__file__)
 
 app = Flask(__name__)
 
+main_dir = os.path.dirname(__file__)
 
 def bkapp(doc):
 
@@ -427,27 +407,20 @@ def bkapp(doc):
     doc.title = "ICT305 Assignment 2 - Pink Fluffy Unicorns"
     doc.theme = Theme(filename='theme.yaml')
 
-
-bkapp = Application(FunctionHandler(bkapp))
-
-sockets, port = bind_sockets('localhost', 0)
-
 @app.route('/', methods=['GET'])
 def bkapp_page():
-    script = server_document(f'http://localhost:{port}/bkapp')
+    script = server_document(f'http://0.0.0.0:5006/bkapp')
     return render_template("embed.html", script=script, template="Flask")
 
 def bk_worker():
-    asyncio.set_event_loop(asyncio.new_event_loop())
-
-    bokeh_tornado = BokehTornado({'/bkapp': bkapp}, extra_websocket_origins=["localhost:8000", "murdoch.vectorpixel.net"])
-    bokeh_http = HTTPServer(bokeh_tornado)
-    bokeh_http.add_sockets(sockets)
-
-    server = BaseServer(IOLoop.current(), bokeh_tornado, bokeh_http)
+    server = Server({'/bkapp': bkapp}, io_loop=IOLoop(), allow_websocket_origin=["localhost:8000", "murdoch.vectorpixel.net", "bokeh.vectorpixel.net"])
     server.start()
     server.io_loop.start()
 
-t = Thread(target=bk_worker)
-t.daemon = True
-t.start()
+
+Thread(target=bk_worker).start()
+if __name__ == '__main__':
+    print('Opening single process Flask app with embedded Bokeh application on http://localhost:8000/')
+    print()
+    print('Multiple connections may block the Bokeh app in this configuration!')
+    app.run(port=8000)
