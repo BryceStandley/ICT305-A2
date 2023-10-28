@@ -1,0 +1,32 @@
+ICT305 Assignment 2 HOW TO LAUNCH instructions - PinkFluffyUnicorns
+
+
+## IMPORTANT ##
+Please ensure you have Python3 installed
+
+
+The application leverages the 'bokeh serve' command to run and display the interactive application in a browser.
+
+To launch the application, simply execute/open the start_app.bat file and after a few moments, your default browser will open and load the application.
+You can also access it while the application server is running at the following address: http://localhost:5006
+
+## Note
+The terminal window that opens when launching the application via the start_app script or by launching the application manually from a terminal window
+must remain running for the application to function. Closing the terminal window will result in the application in your browser to become unresponsive.
+
+The start_app.bat script is simply a helper script that removes any additional commands the user has to input to launch the application. By implimenting
+python venv, the application and its minimum required packages are already packages with the source files and the start_app script handels activating the venv
+and launching the app with the 'bokeh serve ./ --show' command.
+
+To launch the application directly:
+    Open a terminal in the root of the project files. This folder contains the main.py file that controls creating the bokeh plots.
+    Run the following command:
+        '.\venv\Scripts\activate'
+
+    Run the following command:
+        'bokeh serve ./ --show'
+    
+    if the bokeh command is unreconised, try launching the bokeh serve command via python directly:
+        'python -m bokeh serve ./ --show'
+
+    Depending on your installation of python on Windows, you may have to use the 'py' command to launch a python script from the terminal.

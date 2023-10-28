@@ -1,2 +1,3 @@
 @echo off
-python -m bokeh serve .
+cmd.exe /c .\venv\Scripts\activate
+bokeh serve ./ --show
