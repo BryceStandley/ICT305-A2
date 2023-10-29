@@ -432,8 +432,14 @@ def generateDocument(doc):
     doc.title = "ICT305 Assignment 2 - Pink Fluffy Unicorns"
 
 
-server = Server({'/': generateDocument}, num_procs=6, allow_websocket_origin=["localhost:5006", "murdoch.vectorpixel.net", "bokeh.vectorpixel.net"])
-server.start()
+if os.name == 'posix':
+    # System is on a Linux server, num_procs=6 for multiple connections
+    server = Server({'/': generateDocument}, num_procs=6, allow_websocket_origin=["localhost:5006", "murdoch.vectorpixel.net", "bokeh.vectorpixel.net"])
+    server.start()
+else:
+    # System is on a Windows system, num_procs=1 only is supported and only supports single connection to bokeh
+    server = Server({'/': generateDocument}, num_procs=1, allow_websocket_origin=["localhost:5006", "murdoch.vectorpixel.net", "bokeh.vectorpixel.net"])
+    server.start()
 
 if __name__ == '__main__':
     print('Opening Bokeh application on http://localhost:5006/')
