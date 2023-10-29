@@ -14,7 +14,6 @@ def generateDocument(doc):
 
     titleDivFilePath = os.path.join(main_dir, 'res', 'titleDiv.html')
 
-
     # Load title HTML file
     with open(titleDivFilePath, 'r', encoding='utf-8') as f:
         titleDivContents = f.read()
@@ -134,6 +133,7 @@ def generateDocument(doc):
 
     # Recalculate both min and max year box plot data to use for both box plots
     def boxplot_data_update():
+        nonlocal trimmed_df, currentlySelectedTempCapital, tempBoxPlotData
 
         min_year = min(trimmed_df[(trimmed_df['city'] == currentlySelectedTempCapital)]['year'])
         max_year = max(trimmed_df[(trimmed_df['city'] == currentlySelectedTempCapital)]['year'])
@@ -231,6 +231,7 @@ def generateDocument(doc):
     tempBoxPlot2Y.add_tools(HoverTool(tooltips=[('Upper Y1', '@upper1'), ('Lower Y1', '@lower1'), ('Q1  Y1', '@q1_1'), ('Q2 Y1', '@q2_1'), ('Q3 Y1', '@q3_1'), ('Upper Y2', '@upper2'), ('Lower Y2', '@lower2'), ('Q1  Y2', '@q1_2'), ('Q2 Y2', '@q2_2'), ('Q3 Y2', '@q3_2')]))
 
     def update_plots(yearValue, monthValue, capitalMain, capitalSub):
+        nonlocal trimmed_df, trimmedMainSourceData, trimmedSubSourceData
         # Check if all cities are being plotted
         d = trimmed_df[(trimmed_df['year'] == yearValue) & (trimmed_df['month'] == monthValue) & (
                 trimmed_df['city'] == capitalMain)].reset_index(drop=True)
@@ -278,7 +279,6 @@ def generateDocument(doc):
             else:
                 ySunmin, ySunmax = [0,50]
 
-
             if not capitalMain == 'all':
                 evapPlot.y_range.start = yEvapmin - 1
                 evapPlot.y_range.end = yEvapmax + 5
@@ -292,7 +292,7 @@ def generateDocument(doc):
                 'evap': [0],
                 'rain': [0],
                 'sun': [0],
-                'city': currentlySelectedMainCapital
+                'city': capitalMain
             }
 
             trimmedMainSourceData.data = dict(newData1)
@@ -307,22 +307,26 @@ def generateDocument(doc):
 
 
     def slidersOnChange(attr, old, new):
+        nonlocal currentlySelectedMainCapital, currentlySelectedSubCapital
         clampSliders()
         update_plots(year_slider.value, month_slider.value, currentlySelectedMainCapital, currentlySelectedSubCapital)
 
 
     def capitalMainDropdownOnClick(event):
+        nonlocal currentlySelectedMainCapital
         currentlySelectedMainCapital = event.item
         clampSliders()
         update_plots(year_slider.value, month_slider.value, currentlySelectedMainCapital, currentlySelectedSubCapital)
 
 
     def capitalSubDropdownOnClick(event):
+        nonlocal currentlySelectedSubCapital
         currentlySelectedSubCapital = event.item
         clampSliders()
         update_plots(year_slider.value, month_slider.value, currentlySelectedMainCapital, currentlySelectedSubCapital)
 
     def cityTempDropdownOnClick(event):
+        nonlocal currentlySelectedTempCapital, trimmed_df, tempBoxPlot2Y, tempBoxPlot, tempScatterPlot, trimmedTempSourceData
         currentlySelectedTempCapital = event.item
 
         d = trimmed_df[(trimmed_df['city'] == currentlySelectedTempCapital)]
@@ -348,7 +352,7 @@ def generateDocument(doc):
         tempBoxPlot2Y.x_range.factors = [xAxisNameY1, xAxisNameY2]
 
     def clampSliders():
-
+        nonlocal currentlySelectedMainCapital, trimmed_df
         # Get the new max year for the currently selected city
         if (currentlySelectedMainCapital == 'all'):
             yMin, yMax = GetMinMax(trimmed_df.year)
