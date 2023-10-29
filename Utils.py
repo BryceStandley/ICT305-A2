@@ -1,4 +1,4 @@
-from bokeh.models import Range1d, PrintfTickFormatter, HoverTool, TabPanel, Slider, UIElement, Div, Tabs, Dropdown, ColumnDataSource
+from bokeh.models import Range1d, PrintfTickFormatter, HoverTool, TabPanel, Slider, UIElement, Div, Tabs, Dropdown, ColumnDataSource, InlineStyleSheet
 from bokeh.layouts import column, row
 from bokeh.plotting import figure
 from bokeh.palettes import inferno

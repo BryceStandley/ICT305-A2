@@ -6,13 +6,14 @@ from Utils import *
 import os
 from bokeh.models import FactorRange
 from bokeh.server.server import Server
+from bokeh.core.templates import FILE
 
 main_dir = os.path.dirname(__file__)
-
 
 def generateDocument(doc):
 
     titleDivFilePath = os.path.join(main_dir, 'res', 'titleDiv.html')
+
 
     # Load title HTML file
     with open(titleDivFilePath, 'r', encoding='utf-8') as f:
@@ -256,9 +257,27 @@ def generateDocument(doc):
             trimmedMainSourceData.data = dict(newData1)
             trimmedSubSourceData.data = dict(newData2)
 
-            yEvapmin, yEvapmax = GetMinMax(d['evap'])
-            yRainmin, yRainmax = GetMinMax(d['rain'])
-            ySunmin, ySunmax = GetMinMax(d['sun'])
+            if not d.empty:
+                yEvapmin, yEvapmax = GetMinMax(d['evap'])
+            elif not d2.empty:
+                yEvapmin, yEvapmax = GetMinMax(d2['evap'])
+            else:
+                yEvapmin, yEvapmax = [0,50]
+
+            if not d.empty:
+                yRainmin, yRainmax = GetMinMax(d['rain'])
+            elif not d2.empty:
+                yRainmin, yRainmax = GetMinMax(d2['rain'])
+            else:
+                yRainmin, yRainmax = [0,50]
+
+            if not d.empty:
+                ySunmin, ySunmax = GetMinMax(d['sun'])
+            elif not d2.empty:
+                ySunmin, ySunmax = GetMinMax(d2['sun'])
+            else:
+                ySunmin, ySunmax = [0,50]
+
 
             if not capitalMain == 'all':
                 evapPlot.y_range.start = yEvapmin - 1
@@ -359,7 +378,11 @@ def generateDocument(doc):
     cityDropdownSub.on_click(capitalSubDropdownOnClick)
     cityTempsDropdown.on_click(cityTempDropdownOnClick)
 
-    titleDiv = Div(text=titleDivContents)
+    titleDiv = Div(text=titleDivContents, stylesheets=["""
+    :host {
+          margin: 0 auto;
+        }
+    """])
 
     # Temperature Graphs
 
@@ -392,11 +415,20 @@ def generateDocument(doc):
     layout = CreatePageLayout(titleItem=titleDiv, pageTabItems=[tempTabs, evapTab, rainTab, sunTab], align="center",
                               margin=(50, 0, 50, 50))
 
+    layout.stylesheets = ["""
+    :host {
+          margin: auto;
+          width: 50%;
+          padding: 10px;
+        }
+    """]
+
     doc.add_root(layout)
     doc.theme = 'dark_minimal'
     doc.title = "ICT305 Assignment 2 - Pink Fluffy Unicorns"
 
-server = Server({'/': generateDocument}, num_procs=1)
+
+server = Server({'/': generateDocument}, num_procs=6, allow_websocket_origin=["localhost:5006", "murdoch.vectorpixel.net", "bokeh.vectorpixel.net"])
 server.start()
 
 if __name__ == '__main__':
